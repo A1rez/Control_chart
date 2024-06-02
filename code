@@ -1,0 +1,108 @@
+import pandas as pd
+import numpy as np
+from tkinter import Tk, filedialog
+import matplotlib.pyplot as plt
+
+#returns the limits
+def limits(vals, dados):
+    lm1 = np.mean(vals[0]) #lm1 might be the mean of r, var or sd
+    ls1 = lm1 + 3*np.std(dados)
+    li1 = lm1 - 3 * np.std(dados)
+    if li1 < 0:
+        li1 = 0
+    L1=[ls1,lm1,li1]
+    lm2 = np.mean(vals[1]) #lm2 is the mean of Xmean
+    ls2 = lm2 + 3*np.std(dados)
+    li2 = lm2 - 3 * np.std(dados)
+    L2 = [ls2, lm2, li2]
+    return(L1,L2)
+
+#returns the variance and the mean of each sample
+def var_values(dados):
+    v = []
+    xmean = []
+    i=0
+    for _ in dados:
+        v.append(np.var(dados[i]))
+        xmean.append(np.mean(dados[i]))
+        i=i+1
+
+    return (xmean, v)
+
+# returns the range and mean of each sample
+def mean_values(dados):
+    r = []
+    xmean=[]
+    i=0
+    for _ in dados:
+        r.append(np.max(dados[i]) - np.min(dados[i]))
+        xmean.append(np.mean(dados[i]))
+        i=i+1
+
+    return (xmean,r)
+
+
+#calls the proper method for each graphic and store the values
+def values(Choice, Dados):
+    if Choice == 'mean':
+        val = mean_values(Dados)
+    elif Choice == 'var':
+        print('not ready yet')
+    else:
+        print('not ready yet')
+    lim=limits(val,Dados)
+
+
+
+#choose the best grafic to use based on data's caracteristics
+def grafchoice(DD):
+    data = np.array(DD)
+    if np.isnan(data).any() == True:
+        i=0
+        cdata=[]
+        for _ in data:
+            x= data[i]
+            x = x[~np.isnan(x)]
+            cdata[i]=x
+            i=i+1
+        data=cdata
+        choice = 'std'
+    else:
+        if len(dados[0]) < 10:
+            choice = 'mean'
+        else:
+            choice = 'var'
+    valores(choice, data)
+
+def PlotGrafr (C, Dx, Dr, Lx, Lr): #plotagem dos gráficos
+    plt.figure(figsize=(10, 6))
+    plt.subplot(211)
+    plt.plot(Dx, label='Dados', color='blue')
+    plt.scatter(range(len(Dx)), Dx, color='blue')
+    plt.axhline(Lx[1], color='orange', linestyle='--', label='Média')
+    plt.axhline(Lx[2], color='red', linestyle='--', label='Limites de\n Controle')
+    plt.axhline(Lx[0], color='red', linestyle='--')
+    plt.title('Carta de Controle X')
+    plt.legend(loc='upper left', bbox_to_anchor=(1, 0.5))
+    plt.grid(True)
+
+    if C == 0: #se C=0 plota-se o gráfico da amplitude
+    plt.subplot(212)
+    plt.plot(Dr, label='Dados', color='blue')
+    plt.scatter(range(len(Dr)), Dr, color='blue')
+    plt.axhline(Lr[1], color='orange', linestyle='--', label='Média')
+    plt.axhline(Lr[2], color='red', linestyle='--', label='Limite Superior de Controle')
+    plt.axhline(Lr[0], color='red', linestyle='--', label='Limite Inferior de Controle')
+    if C == 0:  # se C=0 plota-se o gráfico da amplitude
+        plt.title('Carta de Controle R')
+    elif C == 1: # se C=0 plota-se o gráfico da variância
+        plt.title('Carta de Controle S²')
+    else: # se c=3 plota-se o gráfico do desvio padrão
+        plt.title('Carta de Controle S')
+    plt.grid(True)
+
+    plt.show()
+
+
+#main
+dd = pd.read_excel("C:\\Users\\Master\\Documents\\seraqvai.xlsx")
