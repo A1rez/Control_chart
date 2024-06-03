@@ -17,6 +17,17 @@ def limits(vals, dados):
     L2 = [ls2, lm2, li2]
     return(L1,L2)
 
+def std_values(dados):
+    s = []
+    xmean = []
+    i = 0
+    for _ in dados:
+        v.append(np.std(dados[i]))
+        xmean.append(np.mean(dados[i]))
+        i = i + 1
+
+    return (xmean, v)
+
 #returns the variance and the mean of each sample
 def var_values(dados):
     v = []
