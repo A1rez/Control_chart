@@ -58,10 +58,12 @@ def values(Choice, Dados):
     if Choice == 'mean':
         val = mean_values(Dados)
     elif Choice == 'var':
-        print('not ready yet')
+        val = var_values(Dados)
     else:
-        print('not ready yet')
+        val = mean_values(Dados)
     lim=limits(val,Dados)
+
+    return val,lim
 
 
 
@@ -83,7 +85,8 @@ def grafchoice(DD):
             choice = 'mean'
         else:
             choice = 'var'
-    valores(choice, data)
+    to_plot=values(choice, data)
+    return to_plot
 
 def PlotGrafr (C, Dx, Dr, Lx, Lr): #plotagem dos gráficos
     plt.figure(figsize=(10, 6))
@@ -117,3 +120,5 @@ def PlotGrafr (C, Dx, Dr, Lx, Lr): #plotagem dos gráficos
 
 #main
 dd = pd.read_excel("C:\\Users\\Master\\Documents\\seraqvai.xlsx")
+plots = grafchoice(dd)
+
