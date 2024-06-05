@@ -1,4 +1,4 @@
-Not ready yet.
+Not ready yet, but alredy working.
 The main goal of this script is to read a datasheet and creat a control chart by variable. 
 The datasheet must contain de data of each sample.
 The script will choose wich chart is the better fit based on the data. The options will be: 
