@@ -22,11 +22,11 @@ def std_values(dados):
     xmean = []
     i = 0
     for _ in dados:
-        v.append(np.std(dados[i]))
+        s.append(np.std(dados[i]))
         xmean.append(np.mean(dados[i]))
         i = i + 1
 
-    return (xmean, v)
+    return (s,xmean)
 
 #returns the variance and the mean of each sample
 def var_values(dados):
@@ -38,7 +38,7 @@ def var_values(dados):
         xmean.append(np.mean(dados[i]))
         i=i+1
 
-    return (xmean, v)
+    return (v,xmean)
 
 # returns the range and mean of each sample
 def amplitude_values(dados):
@@ -50,13 +50,13 @@ def amplitude_values(dados):
         xmean.append(np.mean(dados[i]))
         i=i+1
 
-    return (xmean,r)
+    return (r,xmean)
 
 
 #calls the proper method for each graphic and store the values
 def values(Choice, Dados):
     if Choice == 'amplitude':
-        val = mean_values(Dados)
+        val = amplitude_values(Dados)
     elif Choice == 'var':
         val = var_values(Dados)
     else:
@@ -86,33 +86,32 @@ def grafchoice(DD):
         else:
             choice = 'var'
     to_plot=values(choice, data)
-    return to_plot
+    return to_plot,choice
 
-def PlotGrafr (C, Dx, Dr, Lx, Lr): #plotagem dos gráficos
+def PlotGrafr (Plots): #ploting
     plt.figure(figsize=(10, 6))
     plt.subplot(211)
-    plt.plot(Dx, label='Dados', color='blue')
-    plt.scatter(range(len(Dx)), Dx, color='blue')
-    plt.axhline(Lx[1], color='orange', linestyle='--', label='Média')
-    plt.axhline(Lx[2], color='red', linestyle='--', label='Limites de\n Controle')
-    plt.axhline(Lx[0], color='red', linestyle='--')
-    plt.title('Carta de Controle X')
+    plt.plot(Plots[0][0][1], label='Dados', color='blue')
+    plt.scatter(range(len(Plots[0][0][1])), Plots[0][0][1], color='blue')
+    plt.axhline(Plots[0][1][1][1], color='orange', linestyle='--', label='Mean')
+    plt.axhline(Plots[0][1][1][0], color='red', linestyle='--', label='Control\n Limits')
+    plt.axhline(Plots[0][1][1][2], color='red', linestyle='--')
+    plt.title('x̄ control chart')
     plt.legend(loc='upper left', bbox_to_anchor=(1, 0.5))
     plt.grid(True)
 
-    if C == 0: #se C=0 plota-se o gráfico da amplitude
     plt.subplot(212)
-    plt.plot(Dr, label='Dados', color='blue')
-    plt.scatter(range(len(Dr)), Dr, color='blue')
-    plt.axhline(Lr[1], color='orange', linestyle='--', label='Média')
-    plt.axhline(Lr[2], color='red', linestyle='--', label='Limite Superior de Controle')
-    plt.axhline(Lr[0], color='red', linestyle='--', label='Limite Inferior de Controle')
-    if C == 0:  # se C=0 plota-se o gráfico da amplitude
-        plt.title('Carta de Controle R')
-    elif C == 1: # se C=0 plota-se o gráfico da variância
-        plt.title('Carta de Controle S²')
-    else: # se c=3 plota-se o gráfico do desvio padrão
-        plt.title('Carta de Controle S')
+    plt.plot(Plots[0][0][0], label='Dados', color='blue')
+    plt.scatter(range(len(Plots[0][0][0])), Plots[0][0][0], color='blue')
+    plt.axhline(Plots[0][1][0][1], color='orange', linestyle='--', label='Mean')
+    plt.axhline(Plots[0][1][0][0], color='red', linestyle='--', label='Upper Control Limit')
+    plt.axhline(Plots[0][1][0][2], color='red', linestyle='--', label='Lower Control Limit')
+    if Plots[1] == 'amplitude':
+        plt.title('R Control Chart')
+    elif Plots[1] == 'var':
+        plt.title('S² Control Chart')
+    else:
+        plt.title('Sd Control Chart')
     plt.grid(True)
 
     plt.show()
@@ -121,4 +120,4 @@ def PlotGrafr (C, Dx, Dr, Lx, Lr): #plotagem dos gráficos
 #main
 dd = pd.read_excel("C:\\Users\\Master\\Documents\\seraqvai.xlsx")
 plots = grafchoice(dd)
-
+n=PlotGrafr(plots)
