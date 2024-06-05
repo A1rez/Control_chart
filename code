@@ -81,7 +81,7 @@ def grafchoice(DD):
         data=cdata
         choice = 'std'
     else:
-        if len(dados[0]) < 10:
+        if len(DD.iloc[0]) < 10:
             choice = 'mean'
         else:
             choice = 'var'
