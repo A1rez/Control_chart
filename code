@@ -41,7 +41,7 @@ def var_values(dados):
     return (xmean, v)
 
 # returns the range and mean of each sample
-def mean_values(dados):
+def amplitude_values(dados):
     r = []
     xmean=[]
     i=0
@@ -55,7 +55,7 @@ def mean_values(dados):
 
 #calls the proper method for each graphic and store the values
 def values(Choice, Dados):
-    if Choice == 'mean':
+    if Choice == 'amplitude':
         val = mean_values(Dados)
     elif Choice == 'var':
         val = var_values(Dados)
@@ -82,7 +82,7 @@ def grafchoice(DD):
         choice = 'std'
     else:
         if len(DD.iloc[0]) < 10:
-            choice = 'mean'
+            choice = 'amplitude'
         else:
             choice = 'var'
     to_plot=values(choice, data)
