@@ -2,6 +2,6 @@ Not ready yet.
 The main goal of this script is to read a datasheet and creat a control chart by variable. 
 The datasheet must contain de data of each sample.
 The script will choose wich chart is the better fit based on the data. The options will be: 
--amplitude and mean charts
--variance and mean charts
--standard deviation and mean charts
+-amplitude(R) and x̄ charts
+-variance(V) and x̄ charts
+-standard(Sd) deviation and x̄ charts
