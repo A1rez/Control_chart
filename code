@@ -4,16 +4,16 @@ from tkinter import Tk, filedialog
 import matplotlib.pyplot as plt
 
 #returns the limits
-def limits(vals, dados):
+def limits(vals, Sd):
     lm1 = np.mean(vals[0]) #lm1 might be the mean of r, var or sd
-    ls1 = lm1 + 3*np.std(dados)
-    li1 = lm1 - 3 * np.std(dados)
+    ls1 = lm1 + 3 * Sd
+    li1 = lm1 - 3 * Sd
     if li1 < 0:
         li1 = 0
     L1=[ls1,lm1,li1]
     lm2 = np.mean(vals[1]) #lm2 is the mean of Xmean
-    ls2 = lm2 + 3*np.std(dados)
-    li2 = lm2 - 3 * np.std(dados)
+    ls2 = lm2 + 3 * Sd
+    li2 = lm2 - 3 * Sd
     L2 = [ls2, lm2, li2]
     return(L1,L2)
 
@@ -25,8 +25,7 @@ def std_values(dados):
         s.append(np.std(dados[i]))
         xmean.append(np.mean(dados[i]))
         i = i + 1
-
-    return (s,xmean)
+    return (s, xmean)
 
 #returns the variance and the mean of each sample
 def var_values(dados):
@@ -37,7 +36,6 @@ def var_values(dados):
         v.append(np.var(dados[i]))
         xmean.append(np.mean(dados[i]))
         i=i+1
-
     return (v,xmean)
 
 # returns the range and mean of each sample
@@ -46,10 +44,9 @@ def amplitude_values(dados):
     xmean=[]
     i=0
     for _ in dados:
-        r.append(np.max(dados[i]) - np.min(dados[i]))
-        xmean.append(np.mean(dados[i]))
+        r.append(np.max(dados.iloc[i]) - np.min(dados.iloc[i]))
+        xmean.append(np.mean(dados.iloc[i]))
         i=i+1
-
     return (r,xmean)
 
 
@@ -60,10 +57,8 @@ def values(Choice, Dados):
     elif Choice == 'var':
         val = var_values(Dados)
     else:
-        val = mean_values(Dados)
-    lim=limits(val,Dados)
-
-    return val,lim
+        val = std_values(Dados)
+    return val
 
 
 
@@ -71,53 +66,60 @@ def values(Choice, Dados):
 def grafchoice(DD):
     data = np.array(DD)
     if np.isnan(data).any() == True:
-        i=0
-        cdata=[]
-        for _ in data:
-            x= data[i]
-            x = x[~np.isnan(x)]
-            cdata[i]=x
-            i=i+1
-        data=cdata
         choice = 'std'
     else:
         if len(DD.iloc[0]) < 10:
             choice = 'amplitude'
         else:
             choice = 'var'
-    to_plot=values(choice, data)
-    return to_plot,choice
+    return choice
 
-def PlotGrafr (Plots): #ploting
+def PlotGrafr (type, data, limit): #ploting
     plt.figure(figsize=(10, 6))
     plt.subplot(211)
-    plt.plot(Plots[0][0][1], label='Dados', color='blue')
-    plt.scatter(range(len(Plots[0][0][1])), Plots[0][0][1], color='blue')
-    plt.axhline(Plots[0][1][1][1], color='orange', linestyle='--', label='Mean')
-    plt.axhline(Plots[0][1][1][0], color='red', linestyle='--', label='Control\n Limits')
-    plt.axhline(Plots[0][1][1][2], color='red', linestyle='--')
+    plt.plot(data[1], label='Dados', color='blue')
+    plt.scatter(range(len(data[1])), data[1], color='blue')
+    plt.axhline(limit[1][1], color='orange', linestyle='--', label='Mean')
+    plt.axhline(limit[1][0], color='red', linestyle='--', label='Control\n Limits')
+    plt.axhline(limit[1][2], color='red', linestyle='--')
     plt.title('x̄ control chart')
     plt.legend(loc='upper left', bbox_to_anchor=(1, 0.5))
     plt.grid(True)
 
     plt.subplot(212)
-    plt.plot(Plots[0][0][0], label='Dados', color='blue')
-    plt.scatter(range(len(Plots[0][0][0])), Plots[0][0][0], color='blue')
-    plt.axhline(Plots[0][1][0][1], color='orange', linestyle='--', label='Mean')
-    plt.axhline(Plots[0][1][0][0], color='red', linestyle='--', label='Upper Control Limit')
-    plt.axhline(Plots[0][1][0][2], color='red', linestyle='--', label='Lower Control Limit')
-    if Plots[1] == 'amplitude':
+    plt.plot(data[0], label='Dados', color='blue')
+    plt.scatter(range(len(data[0])), data[0], color='blue')
+    plt.axhline(limit[0][1], color='orange', linestyle='--', label='Mean')
+    plt.axhline(limit[0][0], color='red', linestyle='--', label='Upper Control Limit')
+    plt.axhline(limit[0][2], color='red', linestyle='--', label='Lower Control Limit')
+    if type == 'amplitude':
         plt.title('R Control Chart')
-    elif Plots[1] == 'var':
+    elif type == 'var':
         plt.title('S² Control Chart')
     else:
         plt.title('Sd Control Chart')
     plt.grid(True)
-
     plt.show()
 
 
 #main
 dd = pd.read_excel("C:\\Users\\Master\\Documents\\seraqvai.xlsx")
-plots = grafchoice(dd)
-n=PlotGrafr(plots)
+graph_type = grafchoice(dd)
+if graph_type == 'std':
+    total_sd = dd.values.flatten()
+    total_sd = total_sd[~pd.isna(total_sd)]
+    total_sd = total_sd.std()
+    i = 0
+    dd = np.array(dd)
+    cdata = []
+    for _ in dd:
+        x = dd[i]
+        x = x[~np.isnan(x)]
+        cdata.append(x)
+        i = i + 1
+    dd = cdata
+else:
+    total_sd = dd.values.flatten().std()
+val = values(graph_type,dd)
+lim = limits(val,total_sd)
+n=PlotGrafr(graph_type, val, lim)
