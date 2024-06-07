@@ -21,7 +21,7 @@ def std_values(dados):
     s = []
     xmean = []
     i = 0
-    for _ in dados:
+    while i < len(dados):
         s.append(np.std(dados[i]))
         xmean.append(np.mean(dados[i]))
         i = i + 1
@@ -31,10 +31,10 @@ def std_values(dados):
 def var_values(dados):
     v = []
     xmean = []
-    i=0
-    for _ in dados:
-        v.append(np.var(dados[i]))
-        xmean.append(np.mean(dados[i]))
+    i = 0
+    while i < len(dados):
+        v.append(np.var(dados.iloc[i]))
+        xmean.append(np.mean(dados.iloc[i]))
         i=i+1
     return (v,xmean)
 
@@ -43,10 +43,12 @@ def amplitude_values(dados):
     r = []
     xmean=[]
     i=0
-    for _ in dados:
+    while i < len(dados):
         r.append(np.max(dados.iloc[i]) - np.min(dados.iloc[i]))
         xmean.append(np.mean(dados.iloc[i]))
         i=i+1
+    print(r)
+    print(xmean)
     return (r,xmean)
 
 
@@ -101,9 +103,15 @@ def PlotGrafr (type, data, limit): #ploting
     plt.grid(True)
     plt.show()
 
+def select_sheet():
+    root = Tk()
+    root.withdraw()
+    sheet = filedialog.askopenfilename( title="Choose the datasheet",filetypes=[("Excel", "*.xlsx")])
+    root.destroy()
+    return sheet
 
 #main
-dd = pd.read_excel("C:\\Users\\Master\\Documents\\seraqvai.xlsx")
+dd = pd.read_excel(select_sheet())
 graph_type = grafchoice(dd)
 if graph_type == 'std':
     total_sd = dd.values.flatten()
