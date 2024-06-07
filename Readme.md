@@ -58,5 +58,5 @@ python
 # Example of how to run the script
 python control_chart_plotter.py
 
-##Contributing
+## Contributing
 Contributions are welcome! Please create an issue or pull request if you have any improvements or new features to add.
